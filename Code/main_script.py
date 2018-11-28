@@ -2,11 +2,17 @@ import sys
 import re
 
 DATA_PATH = '../DataSets/'
-EN_FILES = ['en-the-little-prince.txt', 'en-moby-dick.txt']
-FR_FILES = ['fr-le-petit-prince.txt', 'fr-vingt-mille-lieues-sous-les-mers.txt']
-LANGUAGES = ['en', 'fr']
+LANGUAGES = {
+'en': ['en-the-little-prince.txt', 'en-moby-dick.txt'], 
+'fr': ['fr-le-petit-prince.txt', 'fr-vingt-mille-lieues-sous-les-mers.txt']
+}
+
 def main():
-	print(load_file(DATA_PATH + LANGUAGES[0] +"/" + EN_FILES[0]))
+	for language, documents in LANGUAGES.items():
+		for document in documents:
+			print(load_file(DATA_PATH + language +"/" + document))
+			break
+		break
 
 #Returns cleaned content of file
 def load_file(filePath):
