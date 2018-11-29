@@ -1,5 +1,6 @@
 import sys
 import re
+from bigram import BigramModel
 
 DATA_PATH = '../DataSets/'
 LANGUAGES = {
@@ -10,7 +11,8 @@ LANGUAGES = {
 def main():
 	for language, documents in LANGUAGES.items():
 		for document in documents:
-			print(load_file(DATA_PATH + language +"/" + document))
+			text = load_file(DATA_PATH + language +"/" + document)
+			BigramModel(text)
 			break
 		break
 
