@@ -22,10 +22,13 @@ class BigramModel:
                 else:
                     if char in self.char_dict:
                         prevDict = self.char_dict[char]
-                        prevDict[prev] += 1
+                        if prev in prevDict:
+                            prevDict[prev] += 1
+                        else:
+                            prevDict[prev] = 1
                         self.char_dict[char] = prevDict
                     else:
-                        self.char_dict[char] = {char:1}
+                        self.char_dict[char] = {prev:1}
 					
             #for char in self.char_dict:
 				#self.probs[char] = self.calc_prob(char_count=self.char_dict[char], total_count=self.training_size)
