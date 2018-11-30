@@ -13,11 +13,7 @@ class BigramModel:
 
     def train(self, input_str):
         self.gatherData(input_str)
-        for char in self.char_dict:
-            print(str(char) + ": " + str(self.char_dict[char]))
-            #for char in self.prev_dict[prev]:
-                #print(char)
-                #self.probs[prev] = self.calc_prob(char_count=self.char_dict[char], total_count=self.training_size)
+        self.calculateProbablities()
 
 
     def gatherData(self, input_str):
@@ -28,14 +24,12 @@ class BigramModel:
         if input_str:
             self.training_size = len(input_str)
             #dictionary built from perspective of last character
-            for nextChar in input_str:
+            for nextChar in testString:
                 #Skip first char
                 if current != None:
                     if current in self.char_dict:
                         occDict = self.char_dict[current]
-                        #print(str(prev) + "||" + str(occDict))
                         if nextChar in occDict:
-                            #print("Seen char")
                             occDict[nextChar] += 1
                         else:
                             occDict[nextChar] = 1
@@ -47,8 +41,8 @@ class BigramModel:
                         occDict[nextChar] = 1
                         occDict["total"] = 1
                         self.char_dict[current] = occDict
-                        #print(str(current) + "||" + str(self.char_dict[current]))
-                #set current char to previous
+
+                #set current char to previous before going to next char
                 current = nextChar
 
             #no next character, just increment total
@@ -56,8 +50,28 @@ class BigramModel:
                 self.char_dict[nextChar]["total"] += 1
             else:
                 self.char_dict[nextChar] = {"total":1}
+
+        ##TODO check if missing chars, add to occurences if missing
 					
-	
-    #def calc_prob(self, char_count=0, smoothing=BigramModel.SMOOTHING, total_count=0, vocab_size=BigramModel.VOCAB_SIZE):
-		#return (char_count + smoothing) / (total_count + smoothing * vocab_size)
+    def calculateProbablities(self):
+        prob = 0
+        #Stores dictionary of characters following current category with probability for each
+        probDict = {}
+        for char in self.char_dict:
+            for nextChar in self.char_dict[char]:
+                if nextChar != "total":
+                    #calculate probability
+                    prob = self.char_dict[char][nextChar]/self.char_dict[char]["total"]
+                    #get dictionary
+                    if char in self.probs:
+                        probDict = self.probs[char]
+                    else:
+                        probDict = {}
+                    #add probability for nextChar in dictionary
+                    probDict[nextChar] = prob
+                    #update dictionary
+                    self.probs[char] = probDict
+
+        for char in self.probs:
+            print(str(char) + ": " + str(self.probs[char]))
 			
