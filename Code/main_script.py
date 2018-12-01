@@ -18,9 +18,9 @@ def main():
 
 #Returns cleaned content of file
 def load_file(filePath):
-	with open(filePath, 'r') as myfile:
-		content=myfile.read().replace('\n', '')
-	return re.sub("[^a-z]","", content.lower())
+	with open(filePath, 'r', encoding="utf8", errors='ignore') as myfile:
+		content=myfile.read()
+	return re.sub("[^a-z]","", content.lower().replace('\n', ''))
 
 
 
