@@ -29,7 +29,6 @@ class BigramModel:
         current = None
         #Stores dictionary of characters following current category
         occDict = {}
-        testString = "aaaabbcdef"
         if input_str:
             self.training_size = len(input_str)
             #dictionary built from perspective of last character
@@ -79,8 +78,6 @@ class BigramModel:
                     #update dictionary
                     self.probs[char] = probDict
 
-        #for char in self.probs:
-            #print(str(char) + ": " + str(self.probs[char]))
         self.computeProb = True
 			
     def smooth_char_dict(self, string):

@@ -43,6 +43,21 @@ class TestBigram(unittest.TestCase):
         self.assertEqual(testData.char_dict["e"]["f"], 1)
         self.assertEqual(testData.char_dict["f"]["total"], 1)
 
+    def testCalculateProbabilities(self):
+        testData = BigramModel("aaaabbcdef")
+        smooth = testData.SMOOTHING
+        testData.smooth_char_dict("aagbef")
+        testData.calculateProbablities()
+        self.assertEqual(len(testData.probs.keys()), 6)
+        #last char preceding end of string neglected
+        self.assertEqual("f" in testData.probs, False)
+        self.assertEqual(testData.probs["a"]["a"], 3/(4+smooth))
+        self.assertEqual(testData.probs["a"]["g"], smooth/(4+smooth))
+        self.assertEqual(testData.probs["g"]["b"], 1)
+        self.assertEqual(testData.probs["b"]["e"], smooth/(2+smooth))
+        self.assertEqual(testData.probs["e"]["f"], 1)
+
+
 
 if __name__ == '__main__':
         unittest.main()
