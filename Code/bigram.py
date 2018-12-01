@@ -91,6 +91,7 @@ class BigramModel:
             if current != None:
                 #char never seen in training
                 if current not in self.char_dict:
+                    occDict = {}
                     occDict["total"] = self.SMOOTHING
                     occDict[nextChar] = self.SMOOTHING
                     self.char_dict[current] = occDict
@@ -105,6 +106,7 @@ class BigramModel:
     def get_string_prob(self, string):
         prob = 0
         current = None
+        print("BIGRAM MODEL: \n")
         if self.trained and self.computeProb:
             for nextChar in string:
                 if current != None:
