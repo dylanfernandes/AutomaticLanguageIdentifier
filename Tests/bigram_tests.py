@@ -1,6 +1,8 @@
 import sys
 sys.path.insert(0, '../Code')
 import unittest
+import math
+
 from bigram import BigramModel
 
 class TestBigram(unittest.TestCase):
@@ -56,7 +58,15 @@ class TestBigram(unittest.TestCase):
         self.assertEqual(testData.probs["g"]["b"], 1)
         self.assertEqual(testData.probs["b"]["e"], smooth/(2+smooth))
         self.assertEqual(testData.probs["e"]["f"], 1)
-
+    
+    def testGetStringProb(self):
+        testData = BigramModel("aaaabbcdef")
+        smooth = testData.SMOOTHING
+        testData.smooth_char_dict("aagbef")
+        testData.calculateProbablities()
+        val = math.log10(3/(4+smooth)) + math.log10(smooth/(4+smooth)) + math.log10(1) + math.log10(smooth/(2+smooth)) + math.log10(1)
+        val = -1 * val
+        self.assertEqual(testData.get_string_prob("aagbef"), val)
 
 
 if __name__ == '__main__':

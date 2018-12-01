@@ -103,12 +103,10 @@ class BigramModel:
     def get_string_prob(self, string):
         prob = 0
         current = None
-        print("BIGRAM MODEL: \n")
         if self.trained and self.computeProb:
             for nextChar in string:
                 if current != None:
                     prob += (math.log(self.probs[current][nextChar])/math.log(self.LOGBASE))
                 current = nextChar
         prob *= -1
-        print(prob)
         return prob
