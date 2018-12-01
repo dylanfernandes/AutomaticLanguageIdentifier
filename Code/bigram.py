@@ -1,8 +1,13 @@
 import pickle
+import math
 
 class BigramModel:
     SMOOTHING = 0.5
     VOCAB_SIZE = 26
+    LOGBASE = 10
+    trained = False
+    smooth = False
+    computeProb = False
 
     def __init__(self, input_str=None):
         self.char_dict = {}
@@ -13,8 +18,12 @@ class BigramModel:
 
     def train(self, input_str):
         self.gatherData(input_str)
-        self.calculateProbablities()
+        self.trained = True
 
+    def test(self, string):
+        self.smooth_char_dict(string)
+        self.calculateProbablities()
+        self.get_string_prob(string)
 
     def gatherData(self, input_str):
         current = None
@@ -24,7 +33,7 @@ class BigramModel:
         if input_str:
             self.training_size = len(input_str)
             #dictionary built from perspective of last character
-            for nextChar in testString:
+            for nextChar in input_str:
                 #Skip first char
                 if current != None:
                     if current in self.char_dict:
@@ -50,8 +59,6 @@ class BigramModel:
                 self.char_dict[nextChar]["total"] += 1
             else:
                 self.char_dict[nextChar] = {"total":1}
-
-        ##TODO check if missing chars, add to occurences if missing
 					
     def calculateProbablities(self):
         prob = 0
@@ -72,6 +79,37 @@ class BigramModel:
                     #update dictionary
                     self.probs[char] = probDict
 
-        for char in self.probs:
-            print(str(char) + ": " + str(self.probs[char]))
+        #for char in self.probs:
+            #print(str(char) + ": " + str(self.probs[char]))
+        self.computeProb = True
 			
+    def smooth_char_dict(self, string):
+        current = None
+        occDict = {}
+        #check all cases in char_dict
+        for nextChar in string:
+            if current != None:
+                #char never seen in training
+                if current not in self.char_dict:
+                    occDict["total"] = self.SMOOTHING
+                    occDict[nextChar] = self.SMOOTHING
+                    self.char_dict[current] = occDict
+                #nextChar never followed current in training set
+                if nextChar not in self.char_dict[current]:
+                    occDict = self.char_dict[current]
+                    occDict[nextChar] = self.SMOOTHING
+                    occDict["total"] += self.SMOOTHING
+            current = nextChar
+        self.smooth = True
+    
+    def get_string_prob(self, string):
+        prob = 0
+        current = None
+        if self.trained and self.computeProb:
+            for nextChar in string:
+                if current != None:
+                    prob += (math.log(self.probs[current][nextChar])/math.log(self.LOGBASE))
+                current = nextChar
+        prob *= -1
+        print(prob)
+        return prob
