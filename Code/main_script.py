@@ -1,13 +1,14 @@
 import sys
 import re
-import math
 from Code.unigram import UnigramModel
 
 DATA_PATH = '../DataSets/'
+
 LANGUAGES = {
-'en': ['en-the-little-prince.txt', 'en-moby-dick.txt'],
-'fr': ['fr-le-petit-prince.txt', 'fr-vingt-mille-lieues-sous-les-mers.txt']
+    'en': ['en-the-little-prince.txt', 'en-moby-dick.txt'],
+    'fr': ['fr-le-petit-prince.txt', 'fr-vingt-mille-lieues-sous-les-mers.txt']
 }
+
 UNIGRAM_MODELS = {
     'en': UnigramModel(),
     'fr': UnigramModel()
@@ -34,7 +35,7 @@ def main():
 # Returns cleaned content of file
 def load_file(filePath):
     with open(filePath, 'r', encoding="utf8", errors='ignore') as myfile:
-        content=myfile.read()
+        content = myfile.read()
     return clean_string(content)
 
 
@@ -43,21 +44,28 @@ def clean_string(string):
 
 
 def train_unigrams():
+
     for language, documents in LANGUAGES.items():
 
+        train_docs = []
         for document in documents:
-            text = load_file(DATA_PATH + language + "/" + document)
-            UNIGRAM_MODELS[language].train(text)
+            train_docs.append(load_file(DATA_PATH + language + "/" + document))
+
+        UNIGRAM_MODELS[language].train(train_docs)
 
 
 def test_unigrams(test_str):
     clean_str = clean_string(test_str)
-    highest_prob = 0
+    highest_prob = None  # Is supposed to be a float, but set to none here for the first iteration's case
     detected_lang = ''
 
     for language, unigram in UNIGRAM_MODELS.items():
-        prob = abs(unigram.prob_sentence(clean_str))
-        if highest_prob < prob:
+        prob = unigram.prob_sentence(clean_str)
+
+        if not highest_prob:
+            highest_prob = prob
+            detected_lang = language
+        elif highest_prob < prob:
             highest_prob = prob
             detected_lang = language
 
@@ -68,7 +76,7 @@ def exec_unigrams(test_sentences):
     train_unigrams()
     for test_sentence in test_sentences:
         detected_lang = test_unigrams(test_sentence)
-        print('The folllowing sentence:\n{0}\n...is most likely {1}!\n'.format(test_sentence, detected_lang))
+        print('The following sentence:\n{0}\n...is most likely {1}!\n'.format(test_sentence, detected_lang))
 
 
 if __name__ == '__main__':

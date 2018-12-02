@@ -7,34 +7,39 @@ class UnigramModel:
     SMOOTHING = 0.5
     VOCAB_SIZE = 26
 
-    def __init__(self, input_str=None, smooth=True):
+    def __init__(self, train_docs=None, smooth=True):
         self.char_dict = {}
         self.probs = {}
         self.training_size = 0
         self.trained = False
         self.smooth = smooth
-        if input_str:
-            self.train(input_str)
+        if not train_docs:
+            train_docs = []
+        self.train(train_docs)
 
-    def train(self, input_str):
+    def train(self, train_docs):
         # TODO: save to pickle
 
-        if input_str:
-            self.training_size += len(input_str)
-            for char in input_str:
-                if char in self.char_dict:
-                    self.char_dict[char] += 1
-                else:
-                    self.char_dict[char] = 1
+        if len(train_docs) > 0:
 
-            for char in self.char_dict:
-                if self.smooth:
-                    self.probs[char] = self.calc_prob(char_count=self.char_dict[char],
-                                                      total_count=self.training_size,
-                                                      smoothing=UnigramModel.SMOOTHING,
-                                                      vocab_size=UnigramModel.VOCAB_SIZE)
-                else:
-                    self.probs[char] = self.calc_prob(char_count=self.char_dict[char], total_count=self.training_size)
+            self.training_size = 0
+            for train_doc in train_docs:
+                self.training_size += len(train_doc)
+                for char in train_doc:
+                    if char in self.char_dict:
+                        self.char_dict[char] += 1
+                    else:
+                        self.char_dict[char] = 1
+
+                for char in self.char_dict:
+                    if self.smooth:
+                        self.probs[char] = self.calc_prob(char_count=self.char_dict[char],
+                                                          total_count=self.training_size,
+                                                          smoothing=UnigramModel.SMOOTHING,
+                                                          vocab_size=UnigramModel.VOCAB_SIZE)
+                    else:
+                        self.probs[char] = self.calc_prob(char_count=self.char_dict[char],
+                                                          total_count=self.training_size)
 
             self.trained = True
 
