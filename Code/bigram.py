@@ -63,42 +63,47 @@ class BigramModel:
         prob = 0
         #Stores dictionary of characters following current category with probability for each
         probDict = {}
-        for char in self.char_dict:
-            for nextChar in self.char_dict[char]:
-                if nextChar != "total":
-                    #calculate probability
-                    prob = self.char_dict[char][nextChar]/self.char_dict[char]["total"]
-                    #get dictionary
-                    if char in self.probs:
-                        probDict = self.probs[char]
-                    else:
-                        probDict = {}
-                    #add probability for nextChar in dictionary
-                    probDict[nextChar] = prob
-                    #update dictionary
-                    self.probs[char] = probDict
-
-        self.computeProb = True
+        if self.trained:
+            for char in self.char_dict:
+                for nextChar in self.char_dict[char]:
+                    if nextChar != "total":
+                        #calculate probability
+                        prob = self.char_dict[char][nextChar]/self.char_dict[char]["total"]
+                        #get dictionary
+                        if char in self.probs:
+                            probDict = self.probs[char]
+                        else:
+                            probDict = {}
+                        #add probability for nextChar in dictionary
+                        probDict[nextChar] = prob
+                        #update dictionary
+                        self.probs[char] = probDict
+            self.computeProb = True
+        else:
+            print("Training needs to be done before calculating probabilities")
 			
     def smooth_char_dict(self, string):
         current = None
         occDict = {}
         #check all cases in char_dict
-        for nextChar in string:
-            if current != None:
-                #char never seen in training
-                if current not in self.char_dict:
-                    occDict = {}
-                    occDict["total"] = self.SMOOTHING
-                    occDict[nextChar] = self.SMOOTHING
-                    self.char_dict[current] = occDict
-                #nextChar never followed current in training set
-                if nextChar not in self.char_dict[current]:
-                    occDict = self.char_dict[current]
-                    occDict[nextChar] = self.SMOOTHING
-                    occDict["total"] += self.SMOOTHING
-            current = nextChar
-        self.smooth = True
+        if self.trained:
+            for nextChar in string:
+                if current != None:
+                    #char never seen in training
+                    if current not in self.char_dict:
+                        occDict = {}
+                        occDict["total"] = self.SMOOTHING
+                        occDict[nextChar] = self.SMOOTHING
+                        self.char_dict[current] = occDict
+                    #nextChar never followed current in training set
+                    if nextChar not in self.char_dict[current]:
+                        occDict = self.char_dict[current]
+                        occDict[nextChar] = self.SMOOTHING
+                        occDict["total"] += self.SMOOTHING
+                current = nextChar
+            self.smooth = True
+        else:
+            print("Training needs to be done before smoothing")
     
     def get_string_prob(self, string):
         prob = 0
@@ -108,5 +113,7 @@ class BigramModel:
                 if current != None:
                     prob += (math.log(self.probs[current][nextChar])/math.log(self.LOGBASE))
                 current = nextChar
-        prob *= -1
+            prob *= -1
+        else:
+            print("Training and computing probabilities needs to be done before testing a string")
         return prob
