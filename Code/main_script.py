@@ -1,6 +1,5 @@
 import sys
 import re
-from bigram import BigramModel
 
 DATA_PATH = '../DataSets/'
 LANGUAGES = {
@@ -12,9 +11,8 @@ def main():
 	for language, documents in LANGUAGES.items():
 		for document in documents:
 			text = load_file(DATA_PATH + language +"/" + document)
-			english = BigramModel(text)
 			string = clean_string("What will the Japanese economy be like next year?")
-			english.test(string)
+			#Call models to get probability
 			break
 		break
 
