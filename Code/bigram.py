@@ -84,6 +84,7 @@ class BigramModel:
 			
     def smooth_char_dict(self, string):
         current = None
+        #Stores dictionary of characters following current category
         occDict = {}
         #check all cases in char_dict
         if self.trained:
