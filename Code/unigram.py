@@ -20,6 +20,10 @@ class UnigramModel:
     def train(self, train_docs):
         # TODO: save to pickle
 
+        # Allows this function to be called with a single input string.
+        if type(train_docs) == str:
+            train_docs = [train_docs]
+
         if len(train_docs) > 0:
 
             self.training_size = 0
