@@ -1,7 +1,7 @@
 import pickle
 import math
 
-class BigramModel:
+class BigramModelNext:
     SMOOTHING = 0.5
     VOCAB_SIZE = 26
     LOGBASE = 10

@@ -3,11 +3,11 @@ sys.path.insert(0, '../Experiments')
 import unittest
 import math
 
-from bigram_next import BigramModel
+from bigram_next import BigramModelNext
 
 class TestBigram(unittest.TestCase):
     def testTrain(self):
-        testData = BigramModel("aaaabbcdef")
+        testData = BigramModelNext("aaaabbcdef")
         self.assertEqual(testData.trained, True)
         self.assertEqual(len(testData.char_dict.keys()), 6)
         self.assertEqual(testData.char_dict["a"]["total"], 4)
@@ -29,7 +29,7 @@ class TestBigram(unittest.TestCase):
         self.assertEqual("c" in testData.char_dict["a"], False)
     
     def testSmoothing(self):
-        testData = BigramModel("aaaabbcdef")
+        testData = BigramModelNext("aaaabbcdef")
         smooth = testData.SMOOTHING
         testData.smooth_char_dict("aagbef")
         self.assertEqual(len(testData.char_dict.keys()), 7)
@@ -46,7 +46,7 @@ class TestBigram(unittest.TestCase):
         self.assertEqual(testData.char_dict["f"]["total"], 1)
 
     def testCalculateProbabilities(self):
-        testData = BigramModel("aaaabbcdef")
+        testData = BigramModelNext("aaaabbcdef")
         smooth = testData.SMOOTHING
         testData.smooth_char_dict("aagbef")
         testData.calculateProbablities()
@@ -60,7 +60,7 @@ class TestBigram(unittest.TestCase):
         self.assertEqual(testData.probs["e"]["f"], 1)
     
     def testGetStringProb(self):
-        testData = BigramModel("aaaabbcdef")
+        testData = BigramModelNext("aaaabbcdef")
         smooth = testData.SMOOTHING
         testData.smooth_char_dict("aagbef")
         testData.calculateProbablities()
