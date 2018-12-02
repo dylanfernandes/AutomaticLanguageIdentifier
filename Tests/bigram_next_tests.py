@@ -1,9 +1,9 @@
 import sys
-sys.path.insert(0, '../Code')
+sys.path.insert(0, '../Experiments')
 import unittest
 import math
 
-from bigram import BigramModel
+from bigram_next import BigramModel
 
 class TestBigram(unittest.TestCase):
     def testTrain(self):
