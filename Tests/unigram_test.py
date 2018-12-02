@@ -11,7 +11,7 @@ class UnigramTests(unittest.TestCase):
     def test_train(self):
 
         train_str_unique = UnigramTests.str_unique_chars(UnigramTests.train_str)
-        unigram_model = UnigramModel(UnigramTests.train_str)
+        unigram_model = UnigramModel(UnigramTests.train_str, False)
         self.assertEqual(len(unigram_model.char_dict), len(train_str_unique))
         self.assertEqual(len(unigram_model.probs), len(unigram_model.char_dict))
 
@@ -29,7 +29,7 @@ class UnigramTests(unittest.TestCase):
         self.assertTrue(unigram_model.trained)
 
     def test_unigram_train_smoothed(self):
-        unigram_model = UnigramModel(UnigramTests.train_str, True)
+        unigram_model = UnigramModel(UnigramTests.train_str)
 
         # test one of the probability calculations
         # For character 'z'
@@ -38,22 +38,22 @@ class UnigramTests(unittest.TestCase):
         self.assertEqual(unigram_model.probs['z'], prob_test)
 
     def test_unigram_test_str(self):
-        unigram_model = UnigramModel(UnigramTests.train_str)
+        unigram_model = UnigramModel(UnigramTests.train_str, False)
 
         # Manually calculated
         expected_val = -8.838
         self.assertAlmostEqual(unigram_model.prob_sentence(UnigramTests.input_str), expected_val, places=2)
 
     def test_unigram_test_str_smooth(self):
-        unigram_model = UnigramModel(UnigramTests.train_str, True)
+        unigram_model = UnigramModel(UnigramTests.train_str)
 
         # Manually calculated
         expected_val = -13.22
         self.assertAlmostEqual(unigram_model.prob_sentence(UnigramTests.input_str), expected_val, places=2)
 
     def test_unigram_test_str_untrained(self):
-        unigram_model = UnigramModel()
-        unigram_model_smooth = UnigramModel(smooth=True)
+        unigram_model = UnigramModel(smooth=False)
+        unigram_model_smooth = UnigramModel()
 
         self.assertAlmostEqual(unigram_model.prob_sentence(UnigramTests.input_str), 0.0, places=2)
         self.assertAlmostEqual(unigram_model_smooth.prob_sentence(UnigramTests.input_str), 0.0, places=2)

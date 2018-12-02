@@ -7,7 +7,7 @@ class UnigramModel:
     SMOOTHING = 0.5
     VOCAB_SIZE = 26
 
-    def __init__(self, input_str=None, smooth=False):
+    def __init__(self, input_str=None, smooth=True):
         self.char_dict = {}
         self.probs = {}
         self.training_size = 0
