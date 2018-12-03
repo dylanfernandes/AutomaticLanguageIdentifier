@@ -114,19 +114,21 @@ class BigramModel:
             print("Training needs to be done before smoothing")
     
     def get_string_prob(self, string):
-        prob = 0
+        total_prob = 0
         previous = None
-        result_array = {}
+        result_cumul = {}
+        result_single = {}
         bigramNum = 0
         if self.trained and self.computeProb:
             for current in string:
                 if previous != None:
-                    prob += (math.log(self.probs[current][previous])/math.log(self.LOGBASE))
-                    result_array[bigramNum] = {previous + current : prob}
+                    current_prob = math.log(self.probs[current][previous])/math.log(self.LOGBASE)
+                    total_prob += current_prob
+                    result_cumul[bigramNum] = {previous + current : total_prob}
+                    result_single[bigramNum] = {previous + current : current_prob}
                     bigramNum += 1
                 previous = current
-            prob *= -1
             self.testComputed = True
         else:
             print("Training and computing probabilities needs to be done before testing a string")
-        return [ result_array,prob]
+        return [total_prob, result_single, result_cumul]
