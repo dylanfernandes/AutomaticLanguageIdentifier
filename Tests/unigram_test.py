@@ -1,4 +1,6 @@
 import unittest
+import sys
+sys.path.append('../')
 from Code.unigram import UnigramModel
 from math import log10
 
@@ -40,15 +42,26 @@ class UnigramTests(unittest.TestCase):
     def test_unigram_test_str(self):
         unigram_model = UnigramModel(UnigramTests.train_str)
 
-        # Manually calculated
-        expected_val = -8.838
+        expected_val = 0.0
+        for char in UnigramTests.input_str:
+            if char in unigram_model.probs:
+                expected_val += unigram_model.probs[char]
+
         self.assertAlmostEqual(unigram_model.prob_sentence(UnigramTests.input_str), expected_val, places=2)
 
     def test_unigram_test_str_smooth(self):
         unigram_model = UnigramModel(UnigramTests.train_str, True)
 
-        # Manually calculated
-        expected_val = -13.22
+        expected_val = 0.0
+        for char in UnigramTests.input_str:
+            if char in unigram_model.probs:
+                expected_val += unigram_model.probs[char]
+            else:
+                expected_val += UnigramModel.calc_prob(char_count=0,
+                                                       total_count=unigram_model.training_size,
+                                                       smoothing=UnigramModel.SMOOTHING,
+                                                       vocab_size=-UnigramModel.VOCAB_SIZE)
+
         self.assertAlmostEqual(unigram_model.prob_sentence(UnigramTests.input_str), expected_val, places=2)
 
     def test_unigram_test_str_untrained(self):
