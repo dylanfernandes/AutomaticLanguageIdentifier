@@ -52,8 +52,11 @@ def output_results():
 	output_file_template = "../Output/out"
 	sentence_num = 1
 	#dictionary of results from testing sentences
-	result = {}
+	result_cumul = {}
+	result_single = {}
+	result_prob = {}
 	for sentence in SENTENCES:
+		#change output location
 		writer = open(output_file_template+str(sentence_num)+'.txt', 'w')
 		sys.stdout = writer
 		print(sentence + "\n")
@@ -61,13 +64,33 @@ def output_results():
 		print("---------------- ")
 		print("BIGRAM MODEL: ")
 		text = clean_string(sentence)
+		#Get and store test results
 		for language, bigram in bigrams.items():
-			result[language] = bigram.test(text)[0]
+			results = bigram.test(text)
+			result_prob[language] = results[0]
+			result_single[language] = results[1]
+			result_cumul[language] = results[2]
+		#Output results according to format in project specs
 		for i in range(len(text)-1):
-			for language, result_array in result.items():
+			for language, result_array in result_cumul.items():
+				result_array_single = result_single[language]
 				key = list(result_array[i].keys())[0]
-				prob = result_array[i][key]
-				print (LANGUAGES[language] + ": P("+ str(key[1]) + "|" +  str(key[0]) + ") = " + str(prob))
+				prob_single = result_array_single[i][key]
+				prob_cumul = result_array[i][key]
+				print (LANGUAGES[language] + ": P("+ str(key[1]) + "|" +  str(key[0]) + ") = " + str(prob_single) + " ==> log prob of sentence so far: " + str(prob_cumul))
+		#find best language with total probabilities
+		best_prob = None
+		best_lang = None
+		for language in result_prob:
+			prob = result_prob[language]
+			if not best_prob:
+				best_prob = prob
+				best_lang = language
+			elif prob > best_prob:
+				best_prob = prob
+				best_lang = language
+		print("According to the bigram model, the sentence is in " + LANGUAGES[best_lang])
+		#close writer
 		sys.stdout = orig_stdout
 		writer.close()
 		sentence_num += 1
