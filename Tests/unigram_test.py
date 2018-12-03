@@ -36,7 +36,7 @@ class UnigramTests(unittest.TestCase):
         # test one of the probability calculations
         # For character 'z'
         prob_test = log10((1.0 + UnigramModel.SMOOTHING) /
-                          (len(UnigramTests.train_str) + UnigramModel.SMOOTHING * UnigramModel.VOCAB_SIZE))
+                          (len(UnigramTests.train_str) + UnigramModel.SMOOTHING * len(unigram_model.char_dict)))
         self.assertEqual(unigram_model.probs['z'], prob_test)
 
     def test_unigram_test_str(self):
@@ -53,14 +53,23 @@ class UnigramTests(unittest.TestCase):
         unigram_model = UnigramModel(UnigramTests.train_str, True)
 
         expected_val = 0.0
+        char_dict = dict()
+        char_dict.update(unigram_model.char_dict)
+
         for char in UnigramTests.input_str:
-            if char in unigram_model.probs:
-                expected_val += unigram_model.probs[char]
+            char_dict[char] = 0
+
+        for char in UnigramTests.input_str:
+            if char in unigram_model.char_dict:
+                expected_val += UnigramModel.calc_prob(char_count=unigram_model.char_dict[char],
+                                                       total_count=unigram_model.training_size,
+                                                       smoothing=UnigramModel.SMOOTHING,
+                                                       vocab_size=len(char_dict))
             else:
                 expected_val += UnigramModel.calc_prob(char_count=0,
                                                        total_count=unigram_model.training_size,
                                                        smoothing=UnigramModel.SMOOTHING,
-                                                       vocab_size=-UnigramModel.VOCAB_SIZE)
+                                                       vocab_size=len(char_dict))
 
         self.assertAlmostEqual(unigram_model.prob_sentence(UnigramTests.input_str), expected_val, places=2)
 
