@@ -2,17 +2,19 @@ import pickle
 import math
 
 class BigramModelNext:
-    SMOOTHING = 0.5
+    smoothing = 0.5
     VOCAB_SIZE = 26
     LOGBASE = 10
     trained = False
     smooth = False
     computeProb = False
+    bins = 0
 
-    def __init__(self, input_str=None):
+    def __init__(self, input_str=None, user_smoothing = 0.5):
         self.char_dict = {}
         self.probs = {}
         self.training_size = 0
+        self.smoothing = user_smoothing
         if input_str:
             self.train(input_str)
 
@@ -64,11 +66,15 @@ class BigramModelNext:
         #Stores dictionary of characters following current category with probability for each
         probDict = {}
         if self.trained:
+            self.bins = len(self.char_dict.keys())
             for char in self.char_dict:
                 for nextChar in self.char_dict[char]:
                     if nextChar != "total":
                         #calculate probability
-                        prob = self.char_dict[char][nextChar]/self.char_dict[char]["total"]
+                        if self.char_dict[char]["total"] > 0 or  self.smoothing > 0: 
+                            prob = (self.char_dict[char][nextChar] + self.smoothing)/(self.char_dict[char]["total"] + (self.smoothing*self.bins))
+                        else:
+                            prob = 0
                         #get dictionary
                         if char in self.probs:
                             probDict = self.probs[char]
@@ -93,14 +99,15 @@ class BigramModelNext:
                     #char never seen in training
                     if current not in self.char_dict:
                         occDict = {}
-                        occDict["total"] = self.SMOOTHING
-                        occDict[nextChar] = self.SMOOTHING
+                        #will be used for smoothing
+                        occDict["total"] = 0
+                        occDict[nextChar] = 0
                         self.char_dict[current] = occDict
                     #nextChar never followed current in training set
                     if nextChar not in self.char_dict[current]:
                         occDict = self.char_dict[current]
-                        occDict[nextChar] = self.SMOOTHING
-                        occDict["total"] += self.SMOOTHING
+                        #will be used for smoothing
+                        occDict[nextChar] = 0
                 current = nextChar
             self.smooth = True
         else:
