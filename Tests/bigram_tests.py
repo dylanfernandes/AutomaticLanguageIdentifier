@@ -44,28 +44,27 @@ class TestBigram(unittest.TestCase):
         self.assertEqual(testData.char_dict["f"]["e"], 1)
         self.assertEqual(testData.char_dict["f"]["total"], 1)
 
-    # def test_calculate_probabilities(self):
-    #     testData = BigramModel("aaaabbcdef")
-    #     smooth = testData.smoothing
-    #     testData.smooth_char_dict("aagbef")
-    #     testData.calculateProbablities()
-    #     self.assertEqual(len(testData.probs.keys()), 6)
-    #     #last char preceding end of string neglected
-    #     self.assertEqual("f" in testData.probs, False)
-    #     self.assertEqual(testData.probs["a"]["a"], (3+smooth)/(4+(smooth*7)))
-    #     self.assertEqual(testData.probs["a"]["g"], smooth/(4+smooth*7))
-    #     self.assertEqual(testData.probs["g"]["b"], smooth/(smooth*7))
-    #     self.assertEqual(testData.probs["b"]["e"], smooth/(2+smooth*7))
-    #     self.assertEqual(testData.probs["e"]["f"], (1+smooth)/(1+(smooth*7)))
+    def test_calculate_probabilities(self):
+        testData = BigramModel("aaaabbcdef")
+        smooth = testData.smoothing
+        testData.smooth_char_dict("aagbef")
+        testData.calculateProbablities()
+        self.assertEqual(len(testData.probs.keys()), 7)
+        self.assertEqual("f" in testData.probs, True)
+        self.assertEqual(testData.probs["a"]["a"], (3+smooth)/(4+(smooth*7)))
+        self.assertEqual(testData.probs["g"]["a"], smooth/(smooth*7))
+        self.assertEqual(testData.probs["b"]["g"], smooth/(2+(smooth*7)))
+        self.assertEqual(testData.probs["e"]["b"], smooth/(1+(smooth*7)))
+        self.assertEqual(testData.probs["f"]["e"], (1+smooth)/(1+(smooth*7)))
     
-    # def test_get_string_prob(self):
-    #     testData = BigramModel("aaaabbcdef")
-    #     smooth = testData.smoothing
-    #     testData.smooth_char_dict("aagbef")
-    #     testData.calculateProbablities()
-    #     val = math.log10((3+smooth)/(4+(smooth*7))) + math.log10(smooth/(4+smooth*7)) + math.log10(smooth/(smooth*7)) + math.log10(smooth/(2+smooth*7)) + math.log10((1+smooth)/(1+(smooth*7)))
-    #     val = -1 * val
-    #     self.assertAlmostEqual(testData.get_string_prob("aagbef"), val)
+    def test_get_string_prob(self):
+        testData = BigramModel("aaaabbcdef")
+        smooth = testData.smoothing
+        testData.smooth_char_dict("aagbef")
+        testData.calculateProbablities()
+        val = math.log10((3+smooth)/(4+(smooth*7))) + math.log10(smooth/(smooth*7)) + math.log10(smooth/(2+(smooth*7))) + math.log10(smooth/(1+smooth*7)) + math.log10((1+smooth)/(1+(smooth*7)))
+        val = -1 * val
+        self.assertAlmostEqual(testData.get_string_prob("aagbef"), val)
 
 
 if __name__ == '__main__':

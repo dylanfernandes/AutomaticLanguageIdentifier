@@ -117,7 +117,7 @@ class BigramModel:
         previous = None
         if self.trained and self.computeProb:
             for current in string:
-                if current != None:
+                if previous != None:
                     prob += (math.log(self.probs[current][previous])/math.log(self.LOGBASE))
                 previous = current
             prob *= -1
