@@ -7,6 +7,7 @@ class BigramModel:
     trained = False
     smooth = False
     computeProb = False
+    testComputed = False
     bins = 0
 
     def __init__(self, input_str=None, user_smoothing = 0.5):
@@ -24,7 +25,7 @@ class BigramModel:
     def test(self, string):
         self.smooth_char_dict(string)
         self.calculateProbablities()
-        self.get_string_prob(string)
+        return self.get_string_prob(string)
 
     def gatherData(self, input_str):
         previous = None
@@ -115,12 +116,17 @@ class BigramModel:
     def get_string_prob(self, string):
         prob = 0
         previous = None
+        result_array = {}
+        bigramNum = 0
         if self.trained and self.computeProb:
             for current in string:
                 if previous != None:
                     prob += (math.log(self.probs[current][previous])/math.log(self.LOGBASE))
+                    result_array[bigramNum] = {previous + current : prob}
+                    bigramNum += 1
                 previous = current
             prob *= -1
+            self.testComputed = True
         else:
             print("Training and computing probabilities needs to be done before testing a string")
-        return prob
+        return [ result_array,prob]

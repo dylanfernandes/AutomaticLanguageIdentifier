@@ -62,9 +62,37 @@ class TestBigram(unittest.TestCase):
         smooth = testData.smoothing
         testData.smooth_char_dict("aagbef")
         testData.calculateProbablities()
-        val = math.log10((3+smooth)/(4+(smooth*7))) + math.log10(smooth/(smooth*7)) + math.log10(smooth/(2+(smooth*7))) + math.log10(smooth/(1+smooth*7)) + math.log10((1+smooth)/(1+(smooth*7)))
+        results = testData.get_string_prob("aagbef")
+        val = 0
+
+        result_array = results[0]
+        key = list(result_array[0].keys())[0]
+        self.assertEqual(key, "aa")
+        val += math.log10((3+smooth)/(4+(smooth*7)))
+        self.assertAlmostEqual(result_array[0][key], val)
+
+        key = list(result_array[1].keys())[0]
+        self.assertEqual(key, "ag")
+        val += math.log10(smooth/(smooth*7))
+        self.assertAlmostEqual(result_array[1][key], val)
+
+        key = list(result_array[2].keys())[0]
+        self.assertEqual(key, "gb")
+        val += math.log10(smooth/(2+(smooth*7)))
+        self.assertAlmostEqual(result_array[2][key], val)
+
+        key = list(result_array[3].keys())[0]
+        self.assertEqual(key, "be")
+        val += math.log10(smooth/(1+smooth*7))
+        self.assertAlmostEqual(result_array[3][key], val)
+
+        key = list(result_array[4].keys())[0]
+        self.assertEqual(key, "ef")
+        val += math.log10((1+smooth)/(1+(smooth*7)))
+        self.assertAlmostEqual(result_array[4][key], val)
+
         val = -1 * val
-        self.assertAlmostEqual(testData.get_string_prob("aagbef"), val)
+        self.assertAlmostEqual(results[1], val)
 
 
 if __name__ == '__main__':
