@@ -10,7 +10,9 @@ LANGUAGES = {
 def main():
 	for language, documents in LANGUAGES.items():
 		for document in documents:
-			print(load_file(DATA_PATH + language +"/" + document))
+			text = load_file(DATA_PATH + language +"/" + document)
+			string = clean_string("What will the Japanese economy be like next year?")
+			#Call models to get probability
 			break
 		break
 
@@ -18,9 +20,10 @@ def main():
 def load_file(filePath):
 	with open(filePath, 'r', encoding="utf8", errors='ignore') as myfile:
 		content=myfile.read()
-	return re.sub("[^a-z]","", content.lower().replace('\n', ''))
+	return clean_string(content)
 
-
+def clean_string(string):
+	return re.sub("[^a-z]","", string.lower().replace('\n', ''))
 
 if __name__ == '__main__':
 	main()
