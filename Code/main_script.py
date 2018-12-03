@@ -72,12 +72,18 @@ def output_results():
 			result_cumul[language] = results[2]
 		#Output results according to format in project specs
 		for i in range(len(text)-1):
+			#For bigram printing
+			j = 0
 			for language, result_array in result_cumul.items():
 				result_array_single = result_single[language]
 				key = list(result_array[i].keys())[0]
 				prob_single = result_array_single[i][key]
 				prob_cumul = result_array[i][key]
+				if j == 0:
+					print("Bigram: " + key)
 				print (LANGUAGES[language] + ": P("+ str(key[1]) + "|" +  str(key[0]) + ") = " + str(prob_single) + " ==> log prob of sentence so far: " + str(prob_cumul))
+				j += 1
+			print()
 		#find best language with total probabilities
 		best_prob = None
 		best_lang = None
