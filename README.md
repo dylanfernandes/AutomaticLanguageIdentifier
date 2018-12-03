@@ -14,7 +14,6 @@ Ahmad El-Baher `40000968` & Dylan Fernandes `40002559`
 ### Bigram ###
 - Implementation of class in `Code/bigram.py`
 - Tests in `Tests/bigram_tests.py`
-- Probability of end of string given last character not computed as part of bigram probabilities (probability dependent on number of training sets)
 
 ### Experiments ###
 - Go to `Experiments` directory
