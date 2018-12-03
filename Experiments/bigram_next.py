@@ -3,7 +3,6 @@ import math
 
 class BigramModelNext:
     smoothing = 0.5
-    VOCAB_SIZE = 26
     LOGBASE = 10
     trained = False
     smooth = False
