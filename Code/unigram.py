@@ -19,7 +19,8 @@ class UnigramModel:
         # TODO: save to pickle
 
         if input_str:
-            self.training_size = len(input_str)
+
+            self.training_size += len(input_str)
             for char in input_str:
                 if char in self.char_dict:
                     self.char_dict[char] += 1

@@ -1,10 +1,12 @@
 import sys
-sys.path.insert(0, '../Code')
+sys.path.insert(0, '../')
 import re
 
-from bigram import BigramModel
+from Code.bigram import BigramModel
+from Code.unigram import UnigramModel
 
 DATA_PATH = '../DataSets/'
+
 TRAINING_FILES = {
 'en': ['en-the-little-prince.txt', 'en-moby-dick.txt'], 
 'fr': ['fr-le-petit-prince.txt', 'fr-vingt-mille-lieues-sous-les-mers.txt']
@@ -29,53 +31,103 @@ SENTENCES = {
 
 
 def main():
-	bigrams = train_models()
-	output_results(bigrams)
+	unigrams, bigrams = train_models()
+	output_results(unigrams, bigrams)
+
 
 def train_models():
+	unigrams = {}
 	bigrams = {}
-	for language, documents in TRAINING_FILES.items():
-		bigram = BigramModel(user_smoothing=0.5)
-		for document in documents:
-			text = load_file(DATA_PATH + language +"/" + document)
-			bigram.train(text)
-		bigrams[language] = bigram
-	return bigrams
 
-def output_results(bigrams):
+	for language, documents in TRAINING_FILES.items():
+		unigram = UnigramModel(smoothing=0.5)
+		bigram = BigramModel(user_smoothing=0.5)
+
+		for document in documents:
+			text = load_file(DATA_PATH + language + "/" + document)
+			unigram.train(text)
+			bigram.train(text)
+
+		unigrams[language] = unigram
+		bigrams[language] = bigram
+	return unigrams, bigrams
+
+
+def output_results(unigrams, bigrams):
 	orig_stdout = sys.stdout
 	output_file_template = "../Output/out"
 	sentence_num = 1
-	#dictionary of results from testing sentences
+	# Dictionary of results from testing sentences
 	for sentence in SENTENCES:
-		#change output location
-		writer = open(output_file_template+str(sentence_num)+'.txt', 'w')
+
+		# Change output location
+		writer = open(output_file_template + str(sentence_num) + '.txt', 'w')
 		sys.stdout = writer
 		print(sentence + "\n")
-		#unigram models goes here
+
+		unigram_output(sentence, unigrams)
 		bigram_output(sentence, bigrams)
+
 		sentence_num += 1
-		#close writer
+
+		# Close writer
 		sys.stdout = orig_stdout
 		writer.close()
+
+
+def unigram_output(sentence, unigrams):
+
+	results_prob = {}
+	results_single = {}
+	results_cumul = {}
+
+	print("UNIGRAM MODEL: \n")
+	text = clean_string(sentence)
+
+	# Get and store test results
+	for language, unigram in unigrams.items():
+		results = unigram.prob_sentence(text)
+		results_prob[language] = results[0]
+		results_single[language] = results[1]
+		results_cumul[language] = results[2]
+
+	# Output results according to project format
+	for i in range(len(text)):
+
+		print_char_title = True
+		for language, result_cumul in results_cumul.items():
+			char = result_cumul[i][0]
+			cumul_prob = result_cumul[i][1]
+			prob_single = results_single[language][char]
+
+			if print_char_title:
+				print("UNIGRAM: {}".format(char))
+				print_char_title = False
+
+			print("{language}: P({char}) = {prob_single} ==> log prob of sentence so far: {cumul_prob}"
+				  .format(language=language, char=char, prob_single=prob_single, cumul_prob=cumul_prob))
+		
+		print()
+	print("According to the unigram model, the sentence is in {}".format(get_best_language(results_prob)))
+
 
 def bigram_output(sentence, bigrams):
 		result_cumul = {}
 		result_single = {}
 		result_prob = {}
-		print("---------------- ")
-		print("BIGRAM MODEL: ")
+		print("\n----------------\n")
+		print("BIGRAM MODEL: \n")
 		text = clean_string(sentence)
-		#Get and store test results
+		# Get and store test results
 		for language, bigram in bigrams.items():
 			results = bigram.test(text)
 			bigram.dump_probs("../Output/bigram" + language.upper() + ".txt")
 			result_prob[language] = results[0]
 			result_single[language] = results[1]
 			result_cumul[language] = results[2]
-		#Output results according to format in project specs
+		# Output results according to format in project specs
 		for i in range(len(text)-1):
-			#For bigram printing
+			# For bigram printing
 			j = 0
 			for language, result_array in result_cumul.items():
 				result_array_single = result_single[language]
@@ -83,13 +135,14 @@ def bigram_output(sentence, bigrams):
 				prob_single = result_array_single[i][key]
 				prob_cumul = result_array[i][key]
 				if j == 0:
-					print("Bigram: " + key)
-				print (LANGUAGES[language] + ": P("+ str(key[1]) + "|" +  str(key[0]) + ") = " + str(prob_single) + " ==> log prob of sentence so far: " + str(prob_cumul))
+					print("BIGRAM: " + key)
+				print (LANGUAGES[language] + ": P(" + str(key[1]) + "|" +  str(key[0]) + ") = " + str(prob_single) + " ==> log prob of sentence so far: " + str(prob_cumul))
 				j += 1
 			print()
 		print("According to the bigram model, the sentence is in " + get_best_language(result_prob))
 
-#find best language with total probabilities
+
+# Find best language with total probabilities
 def get_best_language(result_prob):
 	best_prob = None
 	best_lang = None
