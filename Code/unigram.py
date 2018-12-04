@@ -4,18 +4,18 @@ from math import log10
 
 # TODO: when testing, try to load file from pickle, train if file does not exist.
 class UnigramModel:
-    SMOOTHING = 0.5
+    SMOOTHING_DEFAULT = 0.5
 
-    def __init__(self, input_str=None, smooth=False, smoothing=-1):
+    def __init__(self, input_str=None, smoothing=0.5):
         self.char_dict = {}
         self.probs = {}
         self.training_size = 0
         self.trained = False
-        self.smooth = smooth
+        self.smoothing = smoothing
         if input_str:
-            self.train(input_str, smoothing)
+            self.train(input_str)
 
-    def train(self, input_str, smoothing=-1):
+    def train(self, input_str):
         # TODO: save to pickle
 
         if input_str:
@@ -26,41 +26,33 @@ class UnigramModel:
                 else:
                     self.char_dict[char] = 1
 
-            self._calc_probs(smoothing)
-
             self.trained = True
 
-    def _calc_probs(self, smoothing=-1):
+    def _calc_probs(self):
 
-        for char in self.char_dict:
-            if self.smooth:
+        if self.trained:
+            for char in self.char_dict:
                 self.probs[char] = self.calc_prob(char_count=self.char_dict[char],
                                                   total_count=self.training_size,
-                                                  smoothing=smoothing,
+                                                  smoothing=self.smoothing,
                                                   vocab_size=len(self.char_dict))
-            else:
-                self.probs[char] = self.calc_prob(char_count=self.char_dict[char], total_count=self.training_size)
 
     # Parse the input for any unaccounted characters for smoothing
-    def _parse_input_smoothing(self, input_str, smoothing=-1):
+    def _calc_probs_with_smoothing(self, input_str):
         if self.trained:
-
-            original_vocab_size = len(self.char_dict)
 
             for char in input_str:
                 if char not in self.char_dict:
                     self.char_dict[char] = 0
 
-            if original_vocab_size != len(self.char_dict):
-                self._calc_probs(smoothing)
+            self._calc_probs()
 
-    def prob_sentence(self, input_str, smoothing=-1):
+    def prob_sentence(self, input_str):
 
         total_prob = 0
         if self.trained:
 
-            if self.smooth:
-                self._parse_input_smoothing(input_str, smoothing)
+            self._calc_probs_with_smoothing(input_str)
 
             for char in input_str:
                 if char in self.char_dict:
@@ -74,6 +66,9 @@ class UnigramModel:
     def calc_prob(char_count, total_count, smoothing=0.0, vocab_size=0.0):
 
         if smoothing < 0.0:
-            smoothing = UnigramModel.SMOOTHING
+            smoothing = UnigramModel.SMOOTHING_DEFAULT
 
-        return log10((char_count + smoothing) / (total_count + smoothing * vocab_size))
+        try:
+            return log10((char_count + smoothing) / (total_count + smoothing * vocab_size))
+        except ValueError:
+            return 0.0
