@@ -8,7 +8,7 @@ class UnigramModel:
 
     def __init__(self, input_str=None, smoothing=0.5):
         self.char_dict = {}
-        self.probs = {}
+        self.probs_dict = {}
         self.training_size = 0
         self.trained = False
         self.smoothing = smoothing
@@ -32,10 +32,10 @@ class UnigramModel:
 
         if self.trained:
             for char in self.char_dict:
-                self.probs[char] = self.calc_prob(char_count=self.char_dict[char],
-                                                  total_count=self.training_size,
-                                                  smoothing=self.smoothing,
-                                                  vocab_size=len(self.char_dict))
+                self.probs_dict[char] = self.calc_prob(char_count=self.char_dict[char],
+                                                       total_count=self.training_size,
+                                                       smoothing=self.smoothing,
+                                                       vocab_size=len(self.char_dict))
 
     # Parse the input for any unaccounted characters for smoothing
     def _calc_probs_with_smoothing(self, input_str):
@@ -50,17 +50,23 @@ class UnigramModel:
     def prob_sentence(self, input_str):
 
         total_prob = 0
+        result_cumul = []
+        result_single = {}
         if self.trained:
 
             self._calc_probs_with_smoothing(input_str)
+            result_single = self.probs_dict
 
             for char in input_str:
                 if char in self.char_dict:
-                    total_prob += self.probs[char]
-        else:
-            print('Model has not been trained!')
+                    current_prob = self.probs_dict[char]
+                    total_prob += current_prob
+                    result_cumul.append((char, total_prob))
 
-        return total_prob
+        else:
+            print('Must train model before attempting to evaluate a sentence!')
+
+        return [total_prob, result_single, result_cumul]
 
     @staticmethod
     def calc_prob(char_count, total_count, smoothing=0.0, vocab_size=0.0):
