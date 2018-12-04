@@ -10,6 +10,7 @@ Ahmad El-Baher `40000968` & Dylan Fernandes `40002559`
 ## Language Prediction ##
 - In `Code` directory
 `python3.5 main_script.py`
+- Third language : Spanish, reffered to as `ot` or `OTHER` in results
 
 ### Bigram ###
 - Implementation of class in `Code/bigram.py`
