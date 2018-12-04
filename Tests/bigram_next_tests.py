@@ -63,9 +63,63 @@ class TestBigram(unittest.TestCase):
         smooth = testData.smoothing
         testData.smooth_char_dict("aagbef")
         testData.calculateProbablities()
-        val = math.log10((3+smooth)/(4+(smooth*7))) + math.log10(smooth/(4+smooth*7)) + math.log10(smooth/(smooth*7)) + math.log10(smooth/(2+smooth*7)) + math.log10((1+smooth)/(1+(smooth*7)))
-        val = -1 * val
-        self.assertAlmostEqual(testData.get_string_prob("aagbef"), val)
+        #val = math.log10((3+smooth)/(4+(smooth*7))) + math.log10(smooth/(4+smooth*7)) + math.log10(smooth/(smooth*7)) + math.log10(smooth/(2+smooth*7)) + math.log10((1+smooth)/(1+(smooth*7)))
+        results = testData.get_string_prob("aagbef")
+
+        result_single = results[1]
+        key = list(result_single[0].keys())[0]
+        self.assertEqual(key, "aa")
+        val = math.log10((3+smooth)/(4+(smooth*7)))
+        self.assertAlmostEqual(result_single[0][key], val)
+
+        key = list(result_single[1].keys())[0]
+        self.assertEqual(key, "ag")
+        val = math.log10(smooth/(4+smooth*7))
+        self.assertAlmostEqual(result_single[1][key], val)
+
+        key = list(result_single[2].keys())[0]
+        self.assertEqual(key, "gb")
+        val = math.log10(smooth/(smooth*7))
+        self.assertAlmostEqual(result_single[2][key], val)
+
+        key = list(result_single[3].keys())[0]
+        self.assertEqual(key, "be")
+        val = math.log10(smooth/(2+smooth*7))
+        self.assertAlmostEqual(result_single[3][key], val)
+
+        key = list(result_single[4].keys())[0]
+        self.assertEqual(key, "ef")
+        val = math.log10((1+smooth)/(1+(smooth*7)))
+        self.assertAlmostEqual(result_single[4][key], val)
+
+        val = 0
+        result_cumul = results[2]
+        key = list(result_cumul[0].keys())[0]
+        self.assertEqual(key, "aa")
+        val += math.log10((3+smooth)/(4+(smooth*7)))
+        self.assertAlmostEqual(result_cumul[0][key], val)
+
+        key = list(result_cumul[1].keys())[0]
+        self.assertEqual(key, "ag")
+        val += math.log10(smooth/(4+smooth*7))
+        self.assertAlmostEqual(result_cumul[1][key], val)
+
+        key = list(result_cumul[2].keys())[0]
+        self.assertEqual(key, "gb")
+        val += math.log10(smooth/(smooth*7))
+        self.assertAlmostEqual(result_cumul[2][key], val)
+
+        key = list(result_cumul[3].keys())[0]
+        self.assertEqual(key, "be")
+        val += math.log10(smooth/(2+smooth*7))
+        self.assertAlmostEqual(result_cumul[3][key], val)
+
+        key = list(result_cumul[4].keys())[0]
+        self.assertEqual(key, "ef")
+        val += math.log10((1+smooth)/(1+(smooth*7)))
+        self.assertAlmostEqual(result_cumul[4][key], val)
+
+        self.assertAlmostEqual(results[0], val)
 
 
 if __name__ == '__main__':
