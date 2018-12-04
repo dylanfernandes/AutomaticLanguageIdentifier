@@ -8,13 +8,16 @@ from bigram_next import BigramModelNext
 DATA_PATH = '../DataSets/'
 TRAINING_FILES = {
 'en': ['en-the-little-prince.txt', 'en-moby-dick.txt'], 
-'fr': ['fr-le-petit-prince.txt', 'fr-vingt-mille-lieues-sous-les-mers.txt']
+'fr': ['fr-le-petit-prince.txt', 'fr-vingt-mille-lieues-sous-les-mers.txt'],
+'ot': ['sp-el-principito.txt', 'sp-moby-dick.txt']
 }
 
 LANGUAGES = {
 	'en': 'ENGLISH', 
-	'fr': "FRENCH"
+	'fr': "FRENCH",
+	'ot': "OTHER"
 }
+
 SENTENCES = {
 	"What will the Japanese economy be like next year?",
 	"She asked him if he was a student at this school.",
