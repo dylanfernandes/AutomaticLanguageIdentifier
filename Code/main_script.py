@@ -1,8 +1,9 @@
 import sys
-sys.path.insert(0, '../Code')
+sys.path.insert(0, '../')
 import re
 
-from bigram import BigramModel
+from Code.bigram import BigramModel
+from Code.unigram import UnigramModel
 
 DATA_PATH = '../DataSets/'
 TRAINING_FILES = {
@@ -27,7 +28,6 @@ SENTENCES = {
 	"J'aime l'IA."
 }
 
-
 def main():
 	bigrams = train_models()
 	output_results(bigrams)
@@ -41,6 +41,7 @@ def train_models():
 			bigram.train(text)
 		bigrams[language] = bigram
 	return bigrams
+
 
 def output_results(bigrams):
 	orig_stdout = sys.stdout

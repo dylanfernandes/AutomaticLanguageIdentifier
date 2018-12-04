@@ -15,11 +15,14 @@ class UnigramModel:
         if input_str:
             self.train(input_str)
 
-    def train(self, input_str):
+    def train(self, input_str, append=False):
         # TODO: save to pickle
 
         if input_str:
-            self.training_size = len(input_str)
+            if append:
+                self.training_size += len(input_str)
+            else:
+                self.training_size = len(input_str)
             for char in input_str:
                 if char in self.char_dict:
                     self.char_dict[char] += 1
