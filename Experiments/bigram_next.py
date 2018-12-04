@@ -25,7 +25,7 @@ class BigramModelNext:
     def test(self, string):
         self.smooth_char_dict(string)
         self.calculateProbablities()
-        self.get_string_prob(string)
+        return self.get_string_prob(string)
 
     def gatherData(self, input_str):
         current = None
