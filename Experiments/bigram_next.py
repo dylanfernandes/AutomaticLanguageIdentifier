@@ -7,6 +7,7 @@ class BigramModelNext:
     trained = False
     smooth = False
     computeProb = False
+    testComputed = False
     bins = 0
 
     def __init__(self, input_str=None, user_smoothing = 0.5):
@@ -24,7 +25,7 @@ class BigramModelNext:
     def test(self, string):
         self.smooth_char_dict(string)
         self.calculateProbablities()
-        self.get_string_prob(string)
+        return self.get_string_prob(string)
 
     def gatherData(self, input_str):
         current = None
@@ -113,14 +114,21 @@ class BigramModelNext:
             print("Training needs to be done before smoothing")
     
     def get_string_prob(self, string):
-        prob = 0
+        total_prob = 0
         current = None
+        result_cumul = {}
+        result_single = {}
+        bigramNum = 0
         if self.trained and self.computeProb:
             for nextChar in string:
                 if current != None:
-                    prob += (math.log(self.probs[current][nextChar])/math.log(self.LOGBASE))
+                    current_prob = math.log(self.probs[current][nextChar])/math.log(self.LOGBASE)
+                    total_prob += current_prob
+                    result_cumul[bigramNum] = {current + nextChar : total_prob}
+                    result_single[bigramNum] = {current + nextChar : current_prob}
+                    bigramNum += 1
                 current = nextChar
-            prob *= -1
+                self.testComputed = True
         else:
             print("Training and computing probabilities needs to be done before testing a string")
-        return prob
+        return [total_prob, result_single, result_cumul]
