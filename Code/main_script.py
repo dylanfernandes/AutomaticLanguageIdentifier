@@ -69,6 +69,7 @@ def bigram_output(sentence, bigrams):
 		#Get and store test results
 		for language, bigram in bigrams.items():
 			results = bigram.test(text)
+			bigram.dump_probs("../Output/bigram" + language.upper() + ".txt")
 			result_prob[language] = results[0]
 			result_single[language] = results[1]
 			result_cumul[language] = results[2]

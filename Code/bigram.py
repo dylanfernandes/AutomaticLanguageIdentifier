@@ -1,5 +1,6 @@
 import pickle
 import math
+import sys
 
 class BigramModel:
     smoothing = 0.5
@@ -132,3 +133,15 @@ class BigramModel:
         else:
             print("Training and computing probabilities needs to be done before testing a string")
         return [total_prob, result_single, result_cumul]
+
+    def dump_probs(self, file):
+        if self.testComputed:
+            orig_stdout = sys.stdout
+            writer = open(file, 'w')
+            sys.stdout = writer
+            for char in self.probs:
+                for previous in self.probs[char]:
+                    current_prob = math.log(self.probs[char][previous])/math.log(self.LOGBASE)
+                    print("P(" + str(char) + "|" + str(previous) + ") = " + str(current_prob))
+            sys.stdout = orig_stdout
+            writer.close()
