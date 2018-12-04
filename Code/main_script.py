@@ -29,7 +29,12 @@ SENTENCES = {
 	"Woody Allen parle.",
 	"Est-ce que l'arbitre est la?",
 	"Cette phrase est en anglais.",
-	"J'aime l'IA."
+	"J'aime l'IA.",
+	"Tiene treinta y uno años.",
+	"¿El avión llegará punctualmente?",
+	"¿Qué ponen en el ciné?",
+	"¿Podría preguntar a alguien a llevar mis maletas a mi habitación?",
+	"¿Cómo lo es?"
 }
 
 SENTENCES_GOOD = {
