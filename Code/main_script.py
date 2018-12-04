@@ -27,40 +27,41 @@ SENTENCES = {
 	"J'aime l'IA."
 }
 
-bigrams = {}
 
 def main():
-	train_models()
-	output_results()
+	bigrams = train_models()
+	output_results(bigrams)
 
 def train_models():
+	bigrams = {}
 	for language, documents in TRAINING_FILES.items():
 		for document in documents:
 			text = load_file(DATA_PATH + language +"/" + document)
 			bigram = BigramModel(text, 0.5)
 		bigrams[language] = bigram
+	return bigrams
 
-def test_models():
-	for language, bigram in bigrams.items():
-		for sentence in SENTENCES:
-			print(str(language) + " : " + str(sentence))
-			text = clean_string(sentence)
-			print(bigram.test(text)[1])
-
-def output_results():
+def output_results(bigrams):
 	orig_stdout = sys.stdout
 	output_file_template = "../Output/out"
 	sentence_num = 1
 	#dictionary of results from testing sentences
-	result_cumul = {}
-	result_single = {}
-	result_prob = {}
 	for sentence in SENTENCES:
 		#change output location
 		writer = open(output_file_template+str(sentence_num)+'.txt', 'w')
 		sys.stdout = writer
 		print(sentence + "\n")
 		#unigram models goes here
+		bigram_output(sentence, bigrams)
+		sentence_num += 1
+		#close writer
+		sys.stdout = orig_stdout
+		writer.close()
+
+def bigram_output(sentence, bigrams):
+		result_cumul = {}
+		result_single = {}
+		result_prob = {}
 		print("---------------- ")
 		print("BIGRAM MODEL: ")
 		text = clean_string(sentence)
@@ -84,22 +85,21 @@ def output_results():
 				print (LANGUAGES[language] + ": P("+ str(key[1]) + "|" +  str(key[0]) + ") = " + str(prob_single) + " ==> log prob of sentence so far: " + str(prob_cumul))
 				j += 1
 			print()
-		#find best language with total probabilities
-		best_prob = None
-		best_lang = None
-		for language in result_prob:
-			prob = result_prob[language]
-			if not best_prob:
-				best_prob = prob
-				best_lang = language
-			elif prob > best_prob:
-				best_prob = prob
-				best_lang = language
-		print("According to the bigram model, the sentence is in " + LANGUAGES[best_lang])
-		#close writer
-		sys.stdout = orig_stdout
-		writer.close()
-		sentence_num += 1
+		print("According to the bigram model, the sentence is in " + get_best_language(result_prob))
+
+#find best language with total probabilities
+def get_best_language(result_prob):
+	best_prob = None
+	best_lang = None
+	for language in result_prob:
+		prob = result_prob[language]
+		if not best_prob:
+			best_prob = prob
+			best_lang = language
+		elif prob > best_prob:
+			best_prob = prob
+			best_lang = language
+	return LANGUAGES[best_lang]
 
 
 #Returns cleaned content of file
