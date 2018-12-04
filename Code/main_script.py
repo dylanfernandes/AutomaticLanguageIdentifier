@@ -35,9 +35,10 @@ def main():
 def train_models():
 	bigrams = {}
 	for language, documents in TRAINING_FILES.items():
+		bigram = BigramModel(user_smoothing=0.5)
 		for document in documents:
 			text = load_file(DATA_PATH + language +"/" + document)
-			bigram = BigramModel(text, 0.5)
+			bigram.train(text)
 		bigrams[language] = bigram
 	return bigrams
 
