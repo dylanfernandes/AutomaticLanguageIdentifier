@@ -104,7 +104,9 @@ def unigram_output(sentence, unigrams):
 				print("UNIGRAM: {}".format(char))
 				print_char_title = False
 
-			print(f"{LANGUAGES[language]}: P({char}) = {prob_single} ==> log prob of sentence so far: {cumul_prob}")
+			print("{language}: P({char}) = {prob_single} ==> log prob of sentence so far: {cumul_prob}"
+				  .format(language=language, char=char, prob_single=prob_single, cumul_prob=cumul_prob))
+		
 		print()
 	print("According to the unigram model, the sentence is in {}".format(get_best_language(results_prob)))
 
