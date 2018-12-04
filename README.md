@@ -12,6 +12,10 @@ Ahmad El-Baher `40000968` & Dylan Fernandes `40002559`
 `python3.5 main_script.py`
 - Third language : Spanish, reffered to as `ot` or `OTHER` in results
 
+### Unigram ###
+- Implementation of class in `Code/unigram.py`
+- Tests in `Tests/unigram_tests.py`
+
 ### Bigram ###
 - Implementation of class in `Code/bigram.py`
 - Tests in `Tests/bigram_tests.py`
@@ -27,6 +31,8 @@ Ahmad El-Baher `40000968` & Dylan Fernandes `40002559`
 - Output will be placed in `Output/BigramExperiment`
 - tests for class in `./Tests/bigram_next_tests.py`
 
+#### Latin Experiment
+- To be determined
 
 ## Output Files ##
 - Test: Located in `Output/`
