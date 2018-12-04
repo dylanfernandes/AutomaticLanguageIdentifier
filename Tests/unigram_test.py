@@ -50,20 +50,33 @@ class UnigramTests(unittest.TestCase):
 
     def test_unigram_test_str(self):
         unigram_model = UnigramModel(UnigramTests.train_str, smoothing=0.0)
-        unigram_model._calc_probs()
+
+        test_sentence_op = unigram_model.prob_sentence(UnigramTests.input_str)
         self.assertEqual(len(unigram_model.probs_dict), len(unigram_model.char_dict))
 
-        expected_val = 0.0
+        total_prob_exp = 0.0
+        cumul_prob_exp = []
+        single_prob_exp = {}
         for char in UnigramTests.input_str:
             if char in unigram_model.probs_dict:
-                expected_val += unigram_model.probs_dict[char]
+                current_prob = UnigramModel.calc_prob(char_count=unigram_model.char_dict[char],
+                                                      total_count=unigram_model.training_size)
+                total_prob_exp += current_prob
+                cumul_prob_exp.append((char, total_prob_exp))
+                single_prob_exp[char] = current_prob
 
-        self.assertAlmostEqual(unigram_model.prob_sentence(UnigramTests.input_str)[0], expected_val, places=2)
+        self.assertAlmostEqual(test_sentence_op[0], total_prob_exp, places=2)
+        self.assertEqual(single_prob_exp, test_sentence_op[1])
+        self.assertEqual(cumul_prob_exp, test_sentence_op[2])
 
     def test_unigram_test_str_smooth(self):
         unigram_model = UnigramModel(UnigramTests.train_str)
 
-        expected_val = 0.0
+        test_sentence_op = unigram_model.prob_sentence(UnigramTests.input_str)
+
+        total_prob_exp = 0.0
+        cumul_prob_exp = []
+        single_prob_exp = {}
         char_dict = dict()
         char_dict.update(unigram_model.char_dict)
 
@@ -72,27 +85,38 @@ class UnigramTests(unittest.TestCase):
 
         for char in UnigramTests.input_str:
             if char in unigram_model.char_dict:
-                expected_val += UnigramModel.calc_prob(char_count=unigram_model.char_dict[char],
-                                                       total_count=unigram_model.training_size,
-                                                       smoothing=UnigramModel.SMOOTHING_DEFAULT,
-                                                       vocab_size=len(char_dict))
+                current_prob = UnigramModel.calc_prob(char_count=unigram_model.char_dict[char],
+                                                      total_count=unigram_model.training_size,
+                                                      smoothing=UnigramModel.SMOOTHING_DEFAULT,
+                                                      vocab_size=len(char_dict))
             else:
-                expected_val += UnigramModel.calc_prob(char_count=0,
-                                                       total_count=unigram_model.training_size,
-                                                       smoothing=UnigramModel.SMOOTHING_DEFAULT,
-                                                       vocab_size=len(char_dict))
+                current_prob = UnigramModel.calc_prob(char_count=0,
+                                                      total_count=unigram_model.training_size,
+                                                      smoothing=UnigramModel.SMOOTHING_DEFAULT,
+                                                      vocab_size=len(char_dict))
+            single_prob_exp[char] = current_prob
+            total_prob_exp += current_prob
+            cumul_prob_exp.append((char, total_prob_exp))
 
-        self.assertAlmostEqual(unigram_model.prob_sentence(UnigramTests.input_str)[0], expected_val, places=2)
+        self.assertEqual(len(char_dict), len(unigram_model.char_dict))
+        self.assertEqual(len(unigram_model.probs_dict), len(unigram_model.char_dict))
+        self.assertAlmostEqual(test_sentence_op[0], total_prob_exp, places=2)
+        self.assertEqual(single_prob_exp, test_sentence_op[1])
+        self.assertEqual(cumul_prob_exp, test_sentence_op[2])
 
     def test_unigram_test_str_untrained(self):
         unigram_model = UnigramModel(smoothing=0.0)
         unigram_model_smooth = UnigramModel()
 
-        unigram_model._calc_probs()
-        unigram_model_smooth._calc_probs()
+        test_sentence_op = unigram_model.prob_sentence(UnigramTests.input_str)
+        test_sentence_op_smooth = unigram_model_smooth.prob_sentence(UnigramTests.input_str)
 
-        self.assertAlmostEqual(unigram_model.prob_sentence(UnigramTests.input_str)[0], 0.0, places=2)
-        self.assertAlmostEqual(unigram_model_smooth.prob_sentence(UnigramTests.input_str)[0], 0.0, places=2)
+        self.assertAlmostEqual(0.0, test_sentence_op[0], places=2)
+        self.assertAlmostEqual(0.0, test_sentence_op_smooth[0], places=2)
+        self.assertEqual({}, test_sentence_op[1])
+        self.assertEqual({}, test_sentence_op_smooth[1])
+        self.assertEqual([], test_sentence_op[2])
+        self.assertEqual([], test_sentence_op_smooth[2])
 
     # Useful functions
     @staticmethod

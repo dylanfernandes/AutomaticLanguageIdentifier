@@ -55,11 +55,11 @@ class UnigramModel:
         if self.trained:
 
             self._calc_probs_with_smoothing(input_str)
-            result_single = self.probs_dict
 
             for char in input_str:
                 if char in self.char_dict:
                     current_prob = self.probs_dict[char]
+                    result_single[char] = current_prob
                     total_prob += current_prob
                     result_cumul.append((char, total_prob))
 
