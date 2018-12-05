@@ -102,7 +102,8 @@ def unigram_output(sentence, unigrams):
 
 	# Get and store test results
 	for language, unigram in unigrams.items():
-		results = unigram.prob_sentence(text)
+		results = unigram.get_string_prob(text)
+		unigram.dump_probs("../Output/unigram" + language.upper() + ".txt")
 		results_prob[language] = results[0]
 		results_single[language] = results[1]
 		results_cumul[language] = results[2]
@@ -152,7 +153,7 @@ def bigram_output(sentence, bigrams):
 				prob_cumul = result_array[i][key]
 				if j == 0:
 					print("BIGRAM: " + key)
-				print (LANGUAGES[language] + ": P(" + str(key[1]) + "|" +  str(key[0]) + ") = " + str(prob_single) + " ==> log prob of sentence so far: " + str(prob_cumul))
+				print(LANGUAGES[language] + ": P(" + str(key[1]) + "|" +  str(key[0]) + ") = " + str(prob_single) + " ==> log prob of sentence so far: " + str(prob_cumul))
 				j += 1
 			print()
 		print("According to the bigram model, the sentence is in " + get_best_language(result_prob))
@@ -173,14 +174,16 @@ def get_best_language(result_prob):
 	return LANGUAGES[best_lang]
 
 
-#Returns cleaned content of file
+# Returns cleaned content of file
 def load_file(filePath):
 	with open(filePath, 'r', encoding="utf8", errors='ignore') as myfile:
 		content=myfile.read()
 	return clean_string(content)
 
+
 def clean_string(string):
 	return re.sub("[^a-z]","", string.lower().replace('\n', ''))
+
 
 if __name__ == '__main__':
 	main()
