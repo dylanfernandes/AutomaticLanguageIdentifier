@@ -14,49 +14,19 @@ TRAINING_FILES_1 = {
 	'ot': ['trainOT.txt']
 }
 
-TRAINING_FILES = {
-	'en': ['en-the-little-prince.txt', 'en-moby-dick.txt'],
-	'fr': ['fr-le-petit-prince.txt', 'fr-vingt-mille-lieues-sous-les-mers.txt'],
-	'ot': ['sp-el-principito.txt', 'sp-moby-dick.txt']
-}
+# Legacy stuff
+# TRAINING_FILES = {
+# 	'en': ['en-the-little-prince.txt', 'en-moby-dick.txt'],
+# 	'fr': ['fr-le-petit-prince.txt', 'fr-vingt-mille-lieues-sous-les-mers.txt'],
+# 	'ot': ['sp-el-principito.txt', 'sp-moby-dick.txt']
+# }
 
 LANGUAGES = {
 	'en': 'ENGLISH', 
 	'fr': "FRENCH",
 	'ot': "SPANISH",
-	'la': "LATIN"
+	'la': "LATIN"  # For Latin experiments
 }
-
-SENTENCES = [
-	"What will the Japanese economy be like next year?",
-	"She asked him if he was a student at this school.",
-	"I'm OK.",
-	"Birds build nests.",
-	"I hate AI.",
-	"L'oiseau vole.",
-	"Woody Allen parle.",
-	"Est-ce que l'arbitre est la?",
-	"Cette phrase est en anglais.",
-	"J'aime l'IA.",
-	"Tiene treinta y uno anos.",
-	"¿El avion llegara punctualmente?",
-	"¿Que ponen en el cine?",
-	"¿Podria preguntar a alguien a llevar mis maletas a mi habitacion?",
-	"¿Como lo es?"
-]
-
-SENTENCES_GOOD = [
-	"Pido perdon a los ninos por haber dedicado este libro a una persona mayor.",
-	"Mi dibujo no representaba un sombrero.",
-	"De repente una enorme masa emergio del agua, y se disparoverticalmente por el aire.",
-	"Es la imagen del inaferrable fantasma de la vida; y esa es la clave de todo ello.",
-	"I jumped to my feet, completely thunderstruck.",
-	"But my drawing is certainly very much less charming than its model.",
-	"That, however, is not my fault.",
-	"J'ai bien frotte mes yeux.",
-	"C'est utile, si l'on est egare pendant la nuit.",
-	"J'ai donc du choisir un autre metier et j'ai appris a piloter des avions."
-]
 
 
 def main():
@@ -64,9 +34,11 @@ def main():
 
 
 def exec_lang_parser(training_files, sentences_file, output_filename):
+	print("NLP commencing:")
 	unigrams, bigrams = train_models(training_files)
 	sentences = load_sentences(sentences_file)
 	output_results(sentences, unigrams, bigrams, output_filename)
+	print("NLP finished! Please check the \'Output\' folder!")
 
 
 def train_models(training_files):
