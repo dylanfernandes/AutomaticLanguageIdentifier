@@ -19,16 +19,13 @@ LANGUAGES = {
 }
 
 SENTENCES = {
-	"What will the Japanese economy be like next year?",
-	"She asked him if he was a student at this school.",
-	"I'm OK.",
-	"Birds build nests.",
-	"I hate AI.",
-	"L'oiseau vole.",
-	"Woody Allen parle.",
-	"Est-ce que l'arbitre est la?",
-	"Cette phrase est en anglais.",
-	"J'aime l'IA."
+	"What restaurant?",
+	"Un bon chef",
+	"What boutique?",
+    "What boutique should we shop at?",
+    "Un bon chef m'as parle l'autre jour.",
+    "What restaurant is your favorite?",
+    "What restaurant should we eat at?"
 }
 
 

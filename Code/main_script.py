@@ -35,7 +35,12 @@ SENTENCES = [
 	"Woody Allen parle.",
 	"Est-ce que l'arbitre est la?",
 	"Cette phrase est en anglais.",
-	"J'aime l'IA."
+	"J'aime l'IA.",
+	"Tiene treinta y uno anos.",
+	"¿El avion llegara punctualmente?",
+	"¿Que ponen en el cine?",
+	"¿Podria preguntar a alguien a llevar mis maletas a mi habitacion?",
+	"¿Como lo es?"
 ]
 
 SENTENCES_GOOD = [
@@ -81,6 +86,7 @@ def train_models(training_files):
 
 
 def load_sentences(sentences_file):
+
 	sentences = []
 	with open(sentences_file, 'r') as file:
 		# Loads all sentences omitting those that begin with
