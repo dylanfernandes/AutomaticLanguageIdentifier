@@ -19,10 +19,13 @@ LANGUAGES = {
 }
 
 SENTENCES = {
-	"Boutique anglaise.",
-	"At which cafe?",
+	"What restaurant?",
 	"Un bon chef",
-	"What boutique?"
+	"What boutique?",
+    "What boutique should we shop at?",
+    "Un bon chef m'as parle l'autre jour.",
+    "What restaurant is your favorite?",
+    "What restaurant should we eat at?"
 }
 
 
