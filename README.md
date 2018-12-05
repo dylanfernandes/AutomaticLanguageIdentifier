@@ -28,11 +28,13 @@ Ahmad El-Baher `40000968` & Dylan Fernandes `40002559`
 - Files used for comparison of performance
 - `bigram_next.py` contains class with bigram_next implementation
 - `main_bigram_next_exp.py` contains logic for file IO to compare both algorithms
-- Output will be placed in `Output/BigramExperiment`
+- Output will be placed in `Output/BigramExperiment/`
 - tests for class in `./Tests/bigram_next_tests.py`
 
 #### Latin Experiment
-- To be determined
+- `latin_exp.py` contains and executes both parts of the experiment
+- The first part parses the ten Latin sentences found in `Datasets/latin_sentences.txt` without training Latin and outputs the results in the folder `Output/no_latin_expr/`
+- The second part parses those same sentences, but after having trained Latin unigram and bigram models and outputs the results in the folder `Output/latin_expr/`
 
 ## Output Files ##
 - Test: Located in `Output/`
