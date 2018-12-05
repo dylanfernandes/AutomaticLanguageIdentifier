@@ -25,3 +25,13 @@ C'est utile, si l'on est egare pendant la nuit.
 J'ai donc du choisir un autre metier et j'ai appris a piloter des avions.
 
 # Incorrectly classified sentences
+J'aime Arnold Schwarzenegger.
+I'm only un poco loco.
+Un program speciale.
+Anakin Skywalker esta muerto.
+Don Eladio et Hector de la Cruz rigolent.
+Mohammad Ahmad Abdullah Al-Bahar sourit.
+Goku leve les bras.
+Obiwan Kenobi a tue Darth Vader.
+Naruto Uzumaki had a deja vu.
+Light Yagami a vu Ryuk.
