@@ -7,19 +7,25 @@ from Code.unigram import UnigramModel
 
 DATA_PATH = '../DataSets/'
 
+TRAINING_FILES_1 = {
+	'en': ['trainEN.txt'],
+	'fr': ['trainFR.txt'],
+	'ot': ['trainOT.txt']
+}
+
 TRAINING_FILES = {
-'en': ['en-the-little-prince.txt', 'en-moby-dick.txt'], 
-'fr': ['fr-le-petit-prince.txt', 'fr-vingt-mille-lieues-sous-les-mers.txt'],
-'ot': ['sp-el-principito.txt', 'sp-moby-dick.txt']
+	'en': ['en-the-little-prince.txt', 'en-moby-dick.txt'],
+	'fr': ['fr-le-petit-prince.txt', 'fr-vingt-mille-lieues-sous-les-mers.txt'],
+	'ot': ['sp-el-principito.txt', 'sp-moby-dick.txt']
 }
 
 LANGUAGES = {
 	'en': 'ENGLISH', 
 	'fr': "FRENCH",
-	'ot': "OTHER"
+	'ot': "SPANISH"
 }
 
-SENTENCES = {
+SENTENCES = [
 	"What will the Japanese economy be like next year?",
 	"She asked him if he was a student at this school.",
 	"I'm OK.",
@@ -30,9 +36,9 @@ SENTENCES = {
 	"Est-ce que l'arbitre est la?",
 	"Cette phrase est en anglais.",
 	"J'aime l'IA."
-}
+]
 
-SENTENCES_GOOD = {
+SENTENCES_GOOD = [
 	"Pido perdon a los ninos por haber dedicado este libro a una persona mayor.",
 	"Mi dibujo no representaba un sombrero.",
 	"De repente una enorme masa emergio del agua, y se disparoverticalmente por el aire.",
@@ -43,19 +49,24 @@ SENTENCES_GOOD = {
 	"J'ai bien frotte mes yeux.",
 	"C'est utile, si l'on est egare pendant la nuit.",
 	"J'ai donc du choisir un autre metier et j'ai appris a piloter des avions."
-}
+]
 
 
 def main():
-	unigrams, bigrams = train_models()
-	output_results(unigrams, bigrams)
+	exec_lang_parser(TRAINING_FILES_1, (DATA_PATH + "sentences.txt"))
 
 
-def train_models():
+def exec_lang_parser(training_files, sentences_file):
+	unigrams, bigrams = train_models(training_files)
+	sentences = load_sentences(sentences_file)
+	output_results(sentences, unigrams, bigrams)
+
+
+def train_models(training_files):
 	unigrams = {}
 	bigrams = {}
 
-	for language, documents in TRAINING_FILES.items():
+	for language, documents in training_files.items():
 		unigram = UnigramModel(smoothing=0.5)
 		bigram = BigramModel(user_smoothing=0.5)
 
@@ -69,12 +80,24 @@ def train_models():
 	return unigrams, bigrams
 
 
-def output_results(unigrams, bigrams):
+def load_sentences(sentences_file):
+	sentences = []
+	with open(sentences_file, 'r') as file:
+		# Loads all sentences omitting those that begin with
+		# a '#' comment signal and omitting single newline characters
+		for sentence in file.read().split('\n'):
+			if len(sentence) > 0:
+				if sentence[0] != '#':
+					sentences.append(sentence)
+	return sentences
+
+
+def output_results(sentences, unigrams, bigrams):
 	orig_stdout = sys.stdout
 	output_file_template = "../Output/out"
 	sentence_num = 1
 	# Dictionary of results from testing sentences
-	for sentence in SENTENCES:
+	for sentence in sentences:
 
 		# Change output location
 		writer = open(output_file_template + str(sentence_num) + '.txt', 'w')
@@ -173,14 +196,16 @@ def get_best_language(result_prob):
 	return LANGUAGES[best_lang]
 
 
-#Returns cleaned content of file
+# Returns cleaned content of file
 def load_file(filePath):
 	with open(filePath, 'r', encoding="utf8", errors='ignore') as myfile:
 		content=myfile.read()
 	return clean_string(content)
 
+
 def clean_string(string):
-	return re.sub("[^a-z]","", string.lower().replace('\n', ''))
+	return re.sub("[^a-z]", "", string.lower().replace('\n', ''))
+
 
 if __name__ == '__main__':
 	main()
