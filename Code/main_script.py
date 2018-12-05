@@ -23,7 +23,8 @@ TRAINING_FILES = {
 LANGUAGES = {
 	'en': 'ENGLISH', 
 	'fr': "FRENCH",
-	'ot': "SPANISH"
+	'ot': "SPANISH",
+	'la': "LATIN"
 }
 
 SENTENCES = [
