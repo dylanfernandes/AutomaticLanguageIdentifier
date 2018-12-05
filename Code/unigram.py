@@ -1,4 +1,5 @@
 import pickle
+import sys
 from math import log10
 
 
@@ -12,6 +13,7 @@ class UnigramModel:
         self.training_size = 0
         self.trained = False
         self.smoothing = smoothing
+        self.str_test_computed = False
         if input_str:
             self.train(input_str)
 
@@ -28,6 +30,7 @@ class UnigramModel:
                     self.char_dict[char] = 1
 
             self.trained = True
+            self.str_test_computed = False
 
     def _calc_probs(self):
 
@@ -48,7 +51,7 @@ class UnigramModel:
 
             self._calc_probs()
 
-    def prob_sentence(self, input_str):
+    def get_string_prob(self, input_str):
 
         total_prob = 0
         result_cumul = []
@@ -64,10 +67,18 @@ class UnigramModel:
                     total_prob += current_prob
                     result_cumul.append((char, total_prob))
 
+            self.str_test_computed = True
+
         else:
             print('Must train model before attempting to evaluate a sentence!')
 
         return [total_prob, result_single, result_cumul]
+
+    def dump_probs(self, filename):
+        if self.str_test_computed:
+            with open(filename, 'w') as file:
+                for char in sorted(self.probs_dict.keys()):
+                    file.write("P({char}) = {prob}\n".format(char=char, prob=self.probs_dict[char]))
 
     @staticmethod
     def calc_prob(char_count, total_count, smoothing=0.0, vocab_size=0.0):
