@@ -6,6 +6,7 @@ from Code.bigram import BigramModel
 from Code.unigram import UnigramModel
 
 DATA_PATH = '../DataSets/'
+OUTPUT_DIR = "../Output/main/"
 
 TRAINING_FILES_1 = {
 	'en': ['trainEN.txt'],
@@ -22,7 +23,8 @@ TRAINING_FILES = {
 LANGUAGES = {
 	'en': 'ENGLISH', 
 	'fr': "FRENCH",
-	'ot': "SPANISH"
+	'ot': "SPANISH",
+	'la': "LATIN"
 }
 
 SENTENCES = [
@@ -58,13 +60,13 @@ SENTENCES_GOOD = [
 
 
 def main():
-	exec_lang_parser(TRAINING_FILES_1, (DATA_PATH + "sentences.txt"))
+	exec_lang_parser(TRAINING_FILES_1, (DATA_PATH + "sentences.txt"), OUTPUT_DIR)
 
 
-def exec_lang_parser(training_files, sentences_file):
+def exec_lang_parser(training_files, sentences_file, output_filename):
 	unigrams, bigrams = train_models(training_files)
 	sentences = load_sentences(sentences_file)
-	output_results(sentences, unigrams, bigrams)
+	output_results(sentences, unigrams, bigrams, output_filename)
 
 
 def train_models(training_files):
@@ -98,20 +100,20 @@ def load_sentences(sentences_file):
 	return sentences
 
 
-def output_results(sentences, unigrams, bigrams):
+def output_results(sentences, unigrams, bigrams, output_dir):
 	orig_stdout = sys.stdout
-	output_file_template = "../Output/out"
 	sentence_num = 1
+	output_template = output_dir + "out"
 	# Dictionary of results from testing sentences
 	for sentence in sentences:
 
 		# Change output location
-		writer = open(output_file_template + str(sentence_num) + '.txt', 'w')
+		writer = open(output_template + str(sentence_num) + '.txt', 'w')
 		sys.stdout = writer
 		print(sentence + "\n")
 
-		unigram_output(sentence, unigrams)
-		bigram_output(sentence, bigrams)
+		unigram_output(sentence, unigrams, output_dir)
+		bigram_output(sentence, bigrams, output_dir)
 
 		sentence_num += 1
 
@@ -120,7 +122,7 @@ def output_results(sentences, unigrams, bigrams):
 		writer.close()
 
 
-def unigram_output(sentence, unigrams):
+def unigram_output(sentence, unigrams, output_dir):
 
 	results_prob = {}
 	results_single = {}
@@ -129,10 +131,11 @@ def unigram_output(sentence, unigrams):
 	print("UNIGRAM MODEL: \n")
 	text = clean_string(sentence)
 
+	output_dir += "model/"
 	# Get and store test results
 	for language, unigram in unigrams.items():
 		results = unigram.get_string_prob(text)
-		unigram.dump_probs("../Output/unigram" + language.upper() + ".txt")
+		unigram.dump_probs(output_dir + "unigram" + language.upper() + ".txt")
 		results_prob[language] = results[0]
 		results_single[language] = results[1]
 		results_cumul[language] = results[2]
@@ -157,17 +160,19 @@ def unigram_output(sentence, unigrams):
 	print("According to the unigram model, the sentence is in {}".format(get_best_language(results_prob)))
 
 
-def bigram_output(sentence, bigrams):
+def bigram_output(sentence, bigrams, output_dir):
 		result_cumul = {}
 		result_single = {}
 		result_prob = {}
 		print("\n----------------\n")
 		print("BIGRAM MODEL: \n")
 		text = clean_string(sentence)
+
+		output_dir += "model/"
 		# Get and store test results
 		for language, bigram in bigrams.items():
 			results = bigram.test(text)
-			bigram.dump_probs("../Output/bigram" + language.upper() + ".txt")
+			bigram.dump_probs(output_dir + "bigram" + language.upper() + ".txt")
 			result_prob[language] = results[0]
 			result_single[language] = results[1]
 			result_cumul[language] = results[2]
