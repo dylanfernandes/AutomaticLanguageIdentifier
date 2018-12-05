@@ -37,7 +37,8 @@ Ahmad El-Baher `40000968` & Dylan Fernandes `40002559`
 - The second part parses those same sentences, but after having trained Latin unigram and bigram models and outputs the results in the folder `Output/latin_expr/`
 
 ## Output Files ##
-- Test: Located in `Output/`
+- Sentences: Located in `Output/main`
+- Models: Located in `Output/main/model`
 
 ## Trained Models ##
 - Located in `Trained_models`
