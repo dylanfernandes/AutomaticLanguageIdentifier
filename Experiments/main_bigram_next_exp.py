@@ -1,11 +1,12 @@
 import sys
-sys.path.insert(0, '../Code')
+sys.path.insert(0, '../')
 import re
-
-from bigram import BigramModel
-from bigram_next import BigramModelNext
+from Code.bigram import BigramModel
+from Experiments.bigram_next import BigramModelNext
 
 DATA_PATH = '../DataSets/'
+OUTPUT_DIR = '../Output/BigramExperiment/'
+
 TRAINING_FILES = {
 'en': ['en-the-little-prince.txt', 'en-moby-dick.txt'], 
 'fr': ['fr-le-petit-prince.txt', 'fr-vingt-mille-lieues-sous-les-mers.txt'],
@@ -43,7 +44,7 @@ def train_models():
         bigram = BigramModel(user_smoothing=0.5)
         next_bigram = BigramModelNext(user_smoothing = 0.5)
         for document in documents:
-            text = load_file(DATA_PATH + language +"/" + document)
+            text = load_file(DATA_PATH + language + "/" + document)
             bigram.train(text)
             next_bigram.train(text)
         bigrams[language] = bigram
@@ -52,7 +53,7 @@ def train_models():
 
 def output_results(bigrams, next_bigrams):
     orig_stdout = sys.stdout
-    output_file_template = "../Output/BigramExperiment/out"
+    output_file_template = OUTPUT_DIR + "out"
     sentence_num = 1
     #dictionary of results from testing sentences
     for sentence in SENTENCES:
@@ -79,9 +80,11 @@ def bigram_output(sentence, bigrams, prev = True):
     else:
         print("BIGRAM NEXT MODEL: ")
     text = clean_string(sentence)
+    output_dir = OUTPUT_DIR + "model/"
     #Get and store test results
     for language, bigram in bigrams.items():
         results = bigram.test(text)
+        bigram.dump_probs(output_dir + "bigram" + language.upper() + ".txt")
         result_prob[language] = results[0]
         result_single[language] = results[1]
         result_cumul[language] = results[2]
