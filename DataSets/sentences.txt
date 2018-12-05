@@ -11,11 +11,6 @@ Woody Allen parle.
 Est-ce que l'arbitre est la?
 Cette phrase est en anglais.
 J'aime l'IA.
-Tiene treinta y uno anos.
-¿El avion llegara punctualmente?
-¿Que ponen en el cine?
-¿Podria preguntar a alguien a llevar mis maletas a mi habitacion?
-¿Como lo es?
 
 # Correctly classified sentences
 Pido perdon a los ninos por haber dedicado este libro a una persona mayor.
